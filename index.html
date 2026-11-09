@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onyx Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fondo: #0b0b10;
+    --panel: #14141c;
+    --dorado: #c9a24b;
+    --dorado-claro: #e6c978;
+    --texto: #e8e6df;
+    --texto-suave: #9a978d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(ellipse at top, #1a1a26 0%, var(--fondo) 60%);
+    color: var(--texto);
+    font-family: 'Lora', serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    border-bottom: 1px solid #2a2a36;
+  }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.15em;
+    color: var(--dorado-claro);
+    text-shadow: 0 0 25px rgba(201,162,75,0.35);
+  }
+  header p { color: var(--texto-suave); font-style: italic; }
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    background: rgba(11,11,16,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #2a2a36;
+    z-index: 10;
+  }
+  nav button {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--texto);
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  nav button:hover, nav button.activo {
+    color: var(--dorado-claro);
+    border-color: var(--dorado);
+    box-shadow: 0 0 12px rgba(201,162,75,0.3);
+  }
+  main { max-width: 1000px; margin: 0 auto; padding: 40px 20px 80px; }
+  section { display: none; animation: aparecer 0.5s ease; }
+  section.activa { display: block; }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  h2 {
+    font-family: 'Cinzel', serif;
+    color: var(--dorado);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    letter-spacing: 0.08em;
+  }
+  .tarjeta {
+    background: var(--panel);
+    border: 1px solid #2a2a36;
+    border-left: 3px solid var(--dorado);
+    padding: 24px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  .tarjeta h3 { font-family: 'Cinzel', serif; color: var(--dorado-claro); margin-bottom: 6px; }
+  .fecha { color: var(--texto-suave); font-size: 0.85rem; margin-bottom: 8px; }
+  .rejilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  .portada {
+    aspect-ratio: 2 / 3;
+    background: linear-gradient(160deg, #22222f, #0e0e14);
+    border: 1px solid #2a2a36;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px;
+    color: var(--texto-suave);
+    font-family: 'Cinzel', serif;
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+  .portada:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,162,75,0.25); border-color: var(--dorado); }
+  footer { text-align: center; padding: 30px; color: var(--texto-suave); font-size: 0.85rem; border-top: 1px solid #2a2a36; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ONYX STUDIO</h1>
+  <p>Historias de fantasía, ciencia ficción y terror</p>
+</header>
+
+<nav>
+  <button class="activo" data-seccion="inicio">Inicio</button>
+  <button data-seccion="noticias">Noticias</button>
+  <button data-seccion="galeria">Galería</button>
+  <button data-seccion="libros">Libros</button>
+</nav>
+
+<main>
+
+  <section id="inicio" class="activa">
+    <h2>Sobre el autor</h2>
+    <div class="tarjeta">
+      <h3>Roku</h3>
+      <p>Aquí irá tu descripción como autor: quién eres, qué te inspira y qué tipo de historias escribes. Mundos de fantasía, viajes de ciencia ficción y relatos de terror que no te dejarán dormir.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Lo que he escrito</h3>
+      <p>Aquí puedes resumir tu obra: cuántos libros tienes, los géneros y por dónde conviene empezar a leer.</p>
+    </div>
+  </section>
+
+  <section id="noticias">
+    <h2>Noticias</h2>
+    <div class="tarjeta">
+      <div class="fecha">Noviembre 2026</div>
+      <h3>Próximos avances</h3>
+      <p>Aquí publicarás novedades: nuevos capítulos, libros en camino y anuncios importantes.</p>
+    </div>
+    <div class="tarjeta">
+      <div class="fecha">Noviembre 2026</div>
+      <h3>Bienvenidos a Onyx Studio</h3>
+      <p>Nace el espacio donde podrás leer todas mis historias, parte por parte.</p>
+    </div>
+  </section>
+
+  <section id="galeria">
+    <h2>Galería</h2>
+    <div class="rejilla">
+      <div class="portada">Portada 1</div>
+      <div class="portada">Portada 2</div>
+      <div class="portada">Portada 3</div>
+      <div class="portada">Portada 4</div>
+      <div class="portada">Portada 5</div>
+      <div class="portada">Portada 6</div>
+    </div>
+  </section>
+
+  <section id="libros">
+    <h2>Libros</h2>
+    <p style="color:var(--texto-suave); margin-bottom:20px;">Aquí aparecerá tu biblioteca. En el siguiente bloque agregamos la lectura por partes.</p>
+    <div class="rejilla">
+      <div class="portada">Libro 1</div>
+      <div class="portada">Libro 2</div>
+      <div class="portada">Libro 3</div>
+    </div>
+  </section>
+
+</main>
+
+<footer>© 2026 Onyx Studio · Todos los derechos reservados</footer>
+
+<script>
+  const botones = document.querySelectorAll('nav button');
+  const secciones = document.querySelectorAll('section');
+  botones.forEach(boton => {
+    boton.addEventListener('click', () => {
+      botones.forEach(b => b.classList.remove('activo'));
+      secciones.forEach(s => s.classList.remove('activa'));
+      boton.classList.add('activo');
+      document.getElementById(boton.dataset.seccion).classList.add('activa');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>
