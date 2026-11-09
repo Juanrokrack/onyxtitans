@@ -105,6 +105,19 @@
     cursor: pointer;
   }
   .portada:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,162,75,0.25); border-color: var(--dorado); }
+
+  /* Foto del autor */
+  .autor { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .foto-autor {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--dorado);
+    box-shadow: 0 0 20px rgba(201,162,75,0.35);
+  }
+  .autor p { flex: 1; min-width: 220px; }
+
   footer { text-align: center; padding: 30px; color: var(--texto-suave); font-size: 0.85rem; border-top: 1px solid #2a2a36; }
 </style>
 </head>
@@ -112,7 +125,7 @@
 
 <header>
   <h1>ONYX STUDIO</h1>
-  <p>Historias de fantasía, ciencia ficción y terror</p>
+  <p>Bienvenid@</p>
 </header>
 
 <nav>
@@ -126,13 +139,13 @@
 
   <section id="inicio" class="activa">
     <h2>Sobre el autor</h2>
-    <div class="tarjeta">
-      <h3>Roku</h3>
-      <p>Aquí irá tu descripción como autor: quién eres, qué te inspira y qué tipo de historias escribes. Mundos de fantasía, viajes de ciencia ficción y relatos de terror que no te dejarán dormir.</p>
+    <div class="tarjeta autor">
+      <img src="imagenes/foto.png" alt="Juan David Rokrack" class="foto-autor">
+      <p>Juan David Rokrack, un joven colombiano de 18 años, en busca de crecer, escribir y crear más cada día, espera el momento perfecto para hacer de este sueño una realidad.</p>
     </div>
     <div class="tarjeta">
       <h3>Lo que he escrito</h3>
-      <p>Aquí puedes resumir tu obra: cuántos libros tienes, los géneros y por dónde conviene empezar a leer.</p>
+      <p>Desde el año 2017 empezó con historias simples, que ahora ha transformado, siendo la primera de ellas "Linterna Roja".</p>
     </div>
   </section>
 
