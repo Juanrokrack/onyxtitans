@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Onyx Studio</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Lora:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --fondo: #0b0b10;
+    --panel: #14141c;
+    --dorado: #c9a24b;
+    --dorado-claro: #e6c978;
+    --texto: #e8e6df;
+    --texto-suave: #9a978d;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    background: radial-gradient(ellipse at top, #1a1a26 0%, var(--fondo) 60%);
+    color: var(--texto);
+    font-family: 'Lora', serif;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+  header {
+    text-align: center;
+    padding: 40px 20px 20px;
+    border-bottom: 1px solid #2a2a36;
+  }
+  header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(2rem, 6vw, 3.5rem);
+    letter-spacing: 0.15em;
+    color: var(--dorado-claro);
+    text-shadow: 0 0 25px rgba(201,162,75,0.35);
+  }
+  header p { color: var(--texto-suave); font-style: italic; }
+  nav {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 16px;
+    position: sticky;
+    top: 0;
+    background: rgba(11,11,16,0.92);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid #2a2a36;
+    z-index: 10;
+  }
+  nav button {
+    background: none;
+    border: 1px solid transparent;
+    color: var(--texto);
+    font-family: 'Cinzel', serif;
+    font-size: 1rem;
+    letter-spacing: 0.1em;
+    padding: 8px 20px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+  nav button:hover, nav button.activo {
+    color: var(--dorado-claro);
+    border-color: var(--dorado);
+    box-shadow: 0 0 12px rgba(201,162,75,0.3);
+  }
+  main { max-width: 1000px; margin: 0 auto; padding: 40px 20px 80px; }
+  section { display: none; animation: aparecer 0.5s ease; }
+  section.activa { display: block; }
+  @keyframes aparecer { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  h2 {
+    font-family: 'Cinzel', serif;
+    color: var(--dorado);
+    font-size: 2rem;
+    margin-bottom: 20px;
+    letter-spacing: 0.08em;
+  }
+  .tarjeta {
+    background: var(--panel);
+    border: 1px solid #2a2a36;
+    border-left: 3px solid var(--dorado);
+    padding: 24px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+  }
+  .tarjeta h3 { font-family: 'Cinzel', serif; color: var(--dorado-claro); margin-bottom: 6px; }
+  .fecha { color: var(--texto-suave); font-size: 0.85rem; margin-bottom: 8px; }
+  .rejilla {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 20px;
+  }
+  .portada {
+    aspect-ratio: 2 / 3;
+    background: linear-gradient(160deg, #22222f, #0e0e14);
+    border: 1px solid #2a2a36;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 12px;
+    color: var(--texto-suave);
+    font-family: 'Cinzel', serif;
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: pointer;
+  }
+  .portada:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,162,75,0.25); border-color: var(--dorado); }
+
+  /* Foto del autor */
+  .autor { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .foto-autor {
+    width: 180px;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 50%;
+    border: 3px solid var(--dorado);
+    box-shadow: 0 0 20px rgba(201,162,75,0.35);
+  }
+  .autor p { flex: 1; min-width: 220px; }
+
+  /* Libros */
+  .libro { text-align: center; }
+  .libro img {
+    width: 100%;
+    aspect-ratio: 2 / 3;
+    object-fit: cover;
+    border: 1px solid #2a2a36;
+    border-radius: 4px;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .libro img:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,162,75,0.25); border-color: var(--dorado); }
+  .libro-titulo { font-family: 'Cinzel', serif; color: var(--dorado-claro); margin-top: 10px; }
+  .sin-clic { cursor: default; font-style: italic; }
+  .sin-clic:hover { transform: none; box-shadow: none; border-color: #2a2a36; }
+
+  /* Detalle de libro */
+  .libro { cursor: pointer; }
+  .volver {
+    background: none; border: none; color: var(--dorado-claro);
+    font-family: 'Cinzel', serif; font-size: 0.95rem; cursor: pointer;
+    padding: 6px 0; margin-bottom: 16px;
+  }
+  .volver:hover { text-decoration: underline; }
+  .detalle { display: flex; gap: 28px; flex-wrap: wrap; margin-bottom: 28px; }
+  .detalle img {
+    width: 220px; aspect-ratio: 2 / 3; object-fit: cover;
+    border: 1px solid #2a2a36; border-radius: 4px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+  .detalle-info { flex: 1; min-width: 240px; }
+  .detalle-info h3 { font-family: 'Cinzel', serif; color: var(--dorado-claro); font-size: 1.6rem; margin-bottom: 10px; }
+  .subtitulo { font-family: 'Cinzel', serif; color: var(--dorado); margin-bottom: 12px; }
+  .estrellas { margin-top: 16px; }
+  .estrella {
+    background: none; border: none; cursor: pointer;
+    font-size: 2rem; color: #3a3a48; transition: color 0.15s, transform 0.15s;
+  }
+  .estrella.on { color: var(--dorado-claro); }
+  .estrella:hover { transform: scale(1.2); color: var(--dorado); }
+  .estrellas-nota { color: var(--texto-suave); font-size: 0.85rem; }
+  .lista-partes { display: grid; gap: 10px; }
+  .parte {
+    display: flex; justify-content: space-between; align-items: center;
+    background: var(--panel); border: 1px solid #2a2a36; border-left: 3px solid var(--dorado);
+    color: var(--texto); font-family: 'Lora', serif; font-size: 1.05rem;
+    padding: 14px 18px; cursor: pointer; border-radius: 4px; transition: all 0.2s;
+  }
+  .parte:hover { border-color: var(--dorado); box-shadow: 0 0 14px rgba(201,162,75,0.25); }
+  .leida { color: var(--dorado); font-size: 0.85rem; }
+
+  /* Lector */
+  .barra-lector { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
+  .btn {
+    background: var(--panel); border: 1px solid #2a2a36; color: var(--texto);
+    font-family: 'Cinzel', serif; padding: 8px 16px; cursor: pointer; border-radius: 4px; transition: all 0.2s;
+  }
+  .btn:hover:not(:disabled) { border-color: var(--dorado); color: var(--dorado-claro); }
+  .btn:disabled { opacity: 0.35; cursor: default; }
+  .tamano { display: flex; gap: 8px; }
+  .caratula-parte {
+    display: block; width: min(320px, 80%); margin: 10px auto 24px;
+    border: 1px solid #2a2a36; border-radius: 4px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+  .titulo-parte { font-family: 'Cinzel', serif; color: var(--dorado-claro); text-align: center; font-size: 1.8rem; margin-bottom: 24px; }
+  .texto-lector { max-width: 680px; margin: 0 auto; line-height: 1.9; }
+  .texto-lector p { margin-bottom: 1.2em; }
+  .nav-partes { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; max-width: 680px; margin: 40px auto 0; }
+
+  footer { text-align: center; padding: 30px; color: var(--texto-suave); font-size: 0.85rem; border-top: 1px solid #2a2a36; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ONYX STUDIO</h1>
+  <p>Bienvenid@</p>
+</header>
+
+<nav>
+  <button class="activo" data-seccion="inicio">Inicio</button>
+  <button data-seccion="noticias">Noticias</button>
+  <button data-seccion="galeria">Galería</button>
+  <button data-seccion="libros">Libros</button>
+</nav>
+
+<main>
+
+  <section id="inicio" class="activa">
+    <h2>Sobre el autor</h2>
+    <div class="tarjeta autor">
+      <img src="imagenes/foto.jpg" alt="Juan David Rokrack" class="foto-autor">
+      <p>Juan David Rokrack, un joven colombiano de 18 años, en busca de crecer, escribir y crear más cada día, espera el momento perfecto para hacer de este sueño una realidad.</p>
+    </div>
+    <div class="tarjeta">
+      <h3>Lo que he escrito</h3>
+      <p>Desde el año 2017 empezó con historias simples, que ahora ha transformado, siendo la primera de ellas "Linterna Roja".</p>
+    </div>
+  </section>
+
+  <section id="noticias">
+    <h2>Noticias</h2>
+    <div class="tarjeta">
+      <p style="color:var(--texto-suave); font-style:italic;">Aún no hay noticias. Pronto habrá novedades.</p>
+    </div>
+  </section>
+
+  <section id="galeria">
+    <h2>Galería</h2>
+    <div class="rejilla">
+      <div class="portada">Portada 1</div>
+      <div class="portada">Portada 2</div>
+      <div class="portada">Portada 3</div>
+      <div class="portada">Portada 4</div>
+      <div class="portada">Portada 5</div>
+      <div class="portada">Portada 6</div>
+    </div>
+  </section>
+
+  <section id="libros">
+    <h2>Libros</h2>
+    <div id="vista-libros"></div>
+  </section>
+
+</main>
+
+<footer>© 2026 Onyx Studio · Todos los derechos reservados</footer>
+
+<script src="lector.js"></script>
+<script>
+  const botones = document.querySelectorAll('nav button');
+  const secciones = document.querySelectorAll('section');
+  botones.forEach(boton => {
+    boton.addEventListener('click', () => {
+      botones.forEach(b => b.classList.remove('activo'));
+      secciones.forEach(s => s.classList.remove('activa'));
+      boton.classList.add('activo');
+      document.getElementById(boton.dataset.seccion).classList.add('activa');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+  });
+</script>
+
+</body>
+</html>

@@ -1,0 +1,11 @@
+{
+  "titulo": "Linterna Roja",
+  "descripcion": "David Roja, un niño de 12 años, una noche de Halloween logra liberar accidentalmente a la criatura más temida, poderosa y sanguinaria de la historia, ¿será capaz de afrontar las consecuencias de sus actos?",
+  "portada": "portada.png",
+  "musica": "soundtrack1lr.mp3",
+  "partes": [
+    {
+      "titulo": "Parte 1: La Noche de Cristal"
+    }
+  ]
+}
