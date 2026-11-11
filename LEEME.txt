@@ -1,0 +1,40 @@
+ONYX STUDIO - GUÍA RÁPIDA
+=========================
+
+ESTRUCTURA
+  index.html ............ la página (no se toca)
+  lector.js ............. la lógica (no se toca)
+  imagenes/ ............. foto del autor
+  libros/
+    lista.json .......... nombres de las carpetas de tus libros
+    <libro>/
+      libro.json ........ título, sinopsis y lista de partes
+      portada.png ....... portada del libro
+      soundtrack.mp3 .... música del libro (opcional)
+      parte-01/
+        texto.txt ....... el capítulo (guardar en UTF-8)
+        caratula.png .... carátula de la parte (opcional)
+        soundtrack.mp3 .. música de esta parte (opcional)
+
+MÚSICA (cada nivel puede tener la suya)
+  - Si una parte tiene parte-XX/soundtrack.mp3, suena esa.
+  - Si no, suena la música del libro.
+  - La música del libro es la que pongas en "musica" dentro de libro.json
+    (por ejemplo "soundtrack1lr.mp3") o, si no hay, libros/<libro>/soundtrack.mp3.
+  - Si una parte quiere otro nombre de archivo, escríbelo en libro.json:
+      { "titulo": "Parte 2: Nombre", "musica": "mi-cancion.mp3" }
+
+AGREGAR UNA PARTE
+  1. Crea la carpeta parte-02 con texto.txt, caratula.png y (si quieres) soundtrack.mp3.
+  2. En libro.json agrega, con coma después de la anterior:
+       { "titulo": "Parte 2: Nombre" }
+  3. Sube la carpeta parte-02 y libro.json a GitHub.
+
+AGREGAR UN LIBRO
+  1. Crea libros/<nombre-del-libro>/ y copia dentro el libro.json de otro libro.
+  2. Cambia título, sinopsis y partes. Agrega portada.png.
+  3. Escribe el nombre de la carpeta en libros/lista.json.
+
+NOTAS
+  - Nombres de carpetas y archivos en minúsculas y sin espacios.
+  - Abre la página con Live Server, no con doble clic.

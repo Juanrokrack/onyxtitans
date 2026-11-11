@@ -9,245 +9,478 @@
   :root {
     --fondo: #0b0b10;
     --panel: #14141c;
+    --panel-2: #1a1a25;
     --dorado: #c9a24b;
     --dorado-claro: #e6c978;
     --texto: #e8e6df;
     --texto-suave: #9a978d;
+    --borde: #2a2a36;
+    --nav-h: 120px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
+  [hidden] { display: none !important; }
+  html { scroll-behavior: smooth; }
   body {
     background: radial-gradient(ellipse at top, #1a1a26 0%, var(--fondo) 60%);
+    background-attachment: fixed;
     color: var(--texto);
     font-family: 'Lora', serif;
     line-height: 1.7;
     min-height: 100vh;
+    overflow-x: hidden;
   }
-  header {
-    text-align: center;
-    padding: 40px 20px 20px;
-    border-bottom: 1px solid #2a2a36;
+  button { font: inherit; color: inherit; }
+
+  /* ---------- Íconos ---------- */
+  .ic { width: 1.15em; height: 1.15em; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; vertical-align: -0.2em; flex: none; }
+
+  /* ---------- Barra superior ---------- */
+  .topbar {
+    position: sticky; top: 0; z-index: 50;
+    display: grid; align-items: center; gap: 8px 20px;
+    grid-template-columns: auto 1fr minmax(210px, 330px) auto;
+    grid-template-areas: "logo nav buscar idioma";
+    padding: 10px 24px;
+    background: rgba(8, 8, 12, 0.94);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(201, 162, 75, 0.55);
   }
-  header h1 {
-    font-family: 'Cinzel', serif;
-    font-size: clamp(2rem, 6vw, 3.5rem);
-    letter-spacing: 0.15em;
-    color: var(--dorado-claro);
-    text-shadow: 0 0 25px rgba(201,162,75,0.35);
+  .logo { grid-area: logo; display: flex; align-items: center; gap: 10px; background: none; border: none; cursor: pointer; color: var(--dorado-claro); }
+  .logo .ic { width: 38px; height: 38px; stroke-width: 1.5; }
+  .logo-t { display: flex; flex-direction: column; text-align: left; font-family: 'Cinzel', serif; line-height: 1; }
+  .logo-t b { font-size: 1.55rem; letter-spacing: 0.14em; color: #fff; font-weight: 700; }
+  .logo-t small { font-size: 0.62rem; letter-spacing: 0.5em; color: var(--dorado); margin-top: 5px; }
+
+  .topbar nav { grid-area: nav; display: flex; justify-content: center; gap: 4px; }
+  .topbar nav button {
+    display: flex; align-items: center; gap: 8px;
+    background: none; border: none; border-bottom: 2px solid transparent;
+    color: var(--texto); font-size: 1rem; padding: 14px 18px; cursor: pointer;
+    transition: color 0.2s, border-color 0.2s, background 0.2s;
   }
-  header p { color: var(--texto-suave); font-style: italic; }
-  nav {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 8px;
-    padding: 16px;
-    position: sticky;
-    top: 0;
-    background: rgba(11,11,16,0.92);
-    backdrop-filter: blur(6px);
-    border-bottom: 1px solid #2a2a36;
-    z-index: 10;
+  .topbar nav button:hover { color: var(--dorado-claro); }
+  .topbar nav button.activo { color: var(--dorado-claro); border-bottom-color: var(--dorado); background: linear-gradient(0deg, rgba(201,162,75,0.12), transparent); }
+
+  .buscar { grid-area: buscar; position: relative; }
+  .buscar > .ic { position: absolute; left: 14px; top: 50%; transform: translateY(-50%); color: var(--dorado-claro); pointer-events: none; }
+  #buscador {
+    width: 100%; background: rgba(20, 20, 28, 0.8); color: var(--texto);
+    border: 1px solid var(--dorado); border-radius: 999px; padding: 11px 16px 11px 42px;
+    font-family: 'Lora', serif; font-size: 0.98rem; outline: none; transition: box-shadow 0.2s;
   }
-  nav button {
-    background: none;
-    border: 1px solid transparent;
-    color: var(--texto);
-    font-family: 'Cinzel', serif;
-    font-size: 1rem;
-    letter-spacing: 0.1em;
-    padding: 8px 20px;
-    cursor: pointer;
-    transition: all 0.25s;
+  #buscador::placeholder { color: var(--texto-suave); font-style: italic; }
+  #buscador:focus { box-shadow: 0 0 16px rgba(201, 162, 75, 0.35); }
+  .resultados {
+    position: absolute; top: calc(100% + 8px); left: 0; right: 0; z-index: 60;
+    display: grid; gap: 8px; max-height: 60vh; overflow-y: auto;
+    background: var(--panel); border: 1px solid var(--dorado); border-radius: 10px; padding: 8px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
   }
-  nav button:hover, nav button.activo {
-    color: var(--dorado-claro);
-    border-color: var(--dorado);
-    box-shadow: 0 0 12px rgba(201,162,75,0.3);
+  .resultados:empty { display: none; }
+  .resultados .aviso-voz { padding: 8px 10px; }
+  .resultado {
+    display: flex; gap: 12px; align-items: center; width: 100%;
+    background: var(--panel-2); border: 1px solid var(--borde); border-radius: 6px;
+    text-align: left; padding: 8px; cursor: pointer; transition: all 0.2s;
   }
-  main { max-width: 1000px; margin: 0 auto; padding: 40px 20px 80px; }
+  .resultado:hover { border-color: var(--dorado); box-shadow: 0 0 12px rgba(201, 162, 75, 0.25); }
+  .resultado img { width: 46px; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 3px; flex: none; }
+  .resultado strong { display: block; font-family: 'Cinzel', serif; color: var(--dorado-claro); font-size: 0.95rem; }
+  .resultado small { color: var(--texto-suave); font-size: 0.8rem; line-height: 1.35; display: block; }
+
+  .selidioma { grid-area: idioma; position: relative; padding-left: 20px; border-left: 1px solid var(--borde); }
+  #btn-idioma {
+    display: flex; align-items: center; gap: 8px; background: none; border: none;
+    color: var(--texto); cursor: pointer; padding: 8px 4px; font-size: 1rem;
+  }
+  #btn-idioma:hover { color: var(--dorado-claro); }
+  .menu-idioma {
+    position: absolute; right: 0; top: calc(100% + 6px); min-width: 150px; z-index: 70;
+    background: var(--panel); border: 1px solid var(--dorado); border-radius: 10px; padding: 6px;
+    box-shadow: 0 14px 40px rgba(0, 0, 0, 0.6);
+  }
+  .menu-idioma button {
+    display: block; width: 100%; text-align: left; background: none; border: none;
+    color: var(--texto); padding: 9px 12px; border-radius: 6px; cursor: pointer;
+  }
+  .menu-idioma button:hover { background: var(--panel-2); color: var(--dorado-claro); }
+  .menu-idioma button.on { color: var(--dorado-claro); }
+
+  @media (max-width: 980px) {
+    .topbar {
+      grid-template-columns: 1fr auto;
+      grid-template-areas: "logo idioma" "nav nav" "buscar buscar";
+      padding: 8px 14px 12px;
+    }
+    .selidioma { border-left: none; padding-left: 0; }
+    .topbar nav { justify-content: flex-start; overflow-x: auto; scrollbar-width: none; margin: 0 -6px; }
+    .topbar nav button { padding: 10px 14px; white-space: nowrap; }
+  }
+  @media (max-width: 480px) {
+    .topbar nav button { padding: 10px 10px; gap: 6px; font-size: 0.95rem; }
+    .logo .ic { width: 32px; height: 32px; }
+    .logo-t b { font-size: 1.3rem; }
+  }
+
+  /* ---------- Secciones ---------- */
+  main { display: block; }
   section { display: none; animation: aparecer 0.5s ease; }
   section.activa { display: block; }
-  @keyframes aparecer { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
-  h2 {
-    font-family: 'Cinzel', serif;
-    color: var(--dorado);
-    font-size: 2rem;
-    margin-bottom: 20px;
-    letter-spacing: 0.08em;
+  @keyframes aparecer { from { opacity: 0; } to { opacity: 1; } }
+  .contenedor { max-width: 1200px; margin: 0 auto; padding: 36px 20px 80px; }
+  h2 { font-family: 'Cinzel', serif; color: var(--dorado); font-size: 2rem; margin-bottom: 20px; letter-spacing: 0.08em; }
+
+  /* ---------- Portada (hero) ---------- */
+  .hero {
+    position: relative; min-height: clamp(440px, 46vw, 620px);
+    display: flex; align-items: center; overflow: hidden;
+    border-bottom: 1px solid rgba(201, 162, 75, 0.4);
   }
-  .tarjeta {
-    background: var(--panel);
-    border: 1px solid #2a2a36;
-    border-left: 3px solid var(--dorado);
-    padding: 24px;
-    margin-bottom: 20px;
-    border-radius: 4px;
+  .hero-img {
+    position: absolute; inset: 0;
+    background: radial-gradient(ellipse at 75% 35%, #4a3418 0%, #1a130d 50%, #0b0b10 100%);
+    background-size: cover; background-position: center right; background-repeat: no-repeat;
   }
+  .hero-sombra {
+    position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgba(8, 8, 12, 0.93) 0%, rgba(8, 8, 12, 0.62) 38%, rgba(8, 8, 12, 0.08) 75%),
+      linear-gradient(0deg, var(--fondo) 0%, transparent 26%);
+  }
+  .hero-contenido { position: relative; z-index: 2; width: 100%; max-width: 1200px; margin: 0 auto; padding: 48px 20px; }
+  .hero-titulo { font-family: 'Cinzel', serif; line-height: 0.95; font-weight: 700; margin: 0; }
+  .h-onyx { display: block; font-size: clamp(3.2rem, 10vw, 7rem); letter-spacing: 0.05em; color: #fff; text-shadow: 0 4px 30px rgba(0, 0, 0, 0.6); }
+  .h-studio {
+    display: block; font-size: clamp(2.2rem, 7.4vw, 5.2rem); letter-spacing: 0.2em;
+    background: linear-gradient(180deg, #f0d98c 0%, #c9a24b 60%, #8f6d26 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .hero-sep { display: flex; align-items: center; gap: 12px; max-width: 460px; margin: 16px 0 14px; color: var(--dorado); }
+  .hero-sep::before, .hero-sep::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--dorado)); }
+  .hero-sep::after { background: linear-gradient(90deg, var(--dorado), transparent); }
+  .hero-lema { font-size: clamp(1.4rem, 3.4vw, 2rem); font-style: italic; color: var(--dorado-claro); margin-bottom: 8px; }
+  .hero-texto { max-width: 520px; color: #d6d3ca; text-shadow: 0 2px 12px rgba(0, 0, 0, 0.8); margin-bottom: 22px; }
+  .btn-ir {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: rgba(8, 8, 12, 0.55); color: var(--dorado-claro);
+    border: 1px solid var(--dorado); border-radius: 999px; padding: 12px 24px;
+    cursor: pointer; transition: all 0.25s;
+  }
+  .btn-ir:hover { background: rgba(201, 162, 75, 0.18); box-shadow: 0 0 18px rgba(201, 162, 75, 0.4); }
+  @media (max-width: 700px) {
+    .hero-sombra { background: linear-gradient(0deg, var(--fondo) 0%, rgba(8, 8, 12, 0.78) 45%, rgba(8, 8, 12, 0.5) 100%); }
+  }
+
+  /* ---------- Tarjetas de acción ---------- */
+  .acciones { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin: -30px 0 44px; position: relative; z-index: 3; }
+  .accion {
+    display: flex; align-items: center; gap: 16px; text-align: left; width: 100%;
+    background: linear-gradient(135deg, rgba(30, 24, 16, 0.96), rgba(14, 14, 20, 0.96));
+    border: 1px solid rgba(201, 162, 75, 0.6); border-radius: 10px; padding: 18px 20px;
+    cursor: pointer; transition: all 0.25s;
+  }
+  .accion:hover { box-shadow: 0 0 22px rgba(201, 162, 75, 0.3); transform: translateY(-2px); }
+  .accion > .ic:first-child { width: 46px; height: 46px; color: var(--dorado-claro); stroke-width: 1.4; }
+  .accion span { flex: 1; }
+  .accion b { display: block; font-size: 1.15rem; font-weight: 600; color: #fff; }
+  .accion small { display: block; color: var(--texto-suave); font-size: 0.88rem; line-height: 1.45; margin-top: 2px; }
+  .accion > .ic:last-child { color: var(--dorado); }
+  @media (max-width: 900px) { .acciones { grid-template-columns: 1fr; margin-top: 24px; } }
+
+  .dos-col { display: grid; grid-template-columns: 2fr 1fr; gap: 36px; margin-bottom: 48px; }
+  .sec-titulo { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .sec-titulo .ic { color: var(--dorado); }
+  .sec-titulo h3 { font-family: 'Cinzel', serif; font-size: 1.35rem; color: #fff; letter-spacing: 0.04em; font-weight: 500; }
+  .sec-titulo::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, var(--dorado), transparent); order: 1; }
+  .sec-titulo .mas { order: 2; background: none; border: none; color: var(--dorado-claro); cursor: pointer; font-size: 0.9rem; white-space: nowrap; }
+  .sec-titulo .mas:hover { text-decoration: underline; }
+  .destacados { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 16px; }
+  .dest {
+    position: relative; aspect-ratio: 2 / 3; overflow: hidden; padding: 0; cursor: pointer;
+    background: var(--panel); border: 1px solid rgba(201, 162, 75, 0.5); border-radius: 8px;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .dest:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201, 162, 75, 0.3); }
+  .dest img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .dest-t {
+    position: absolute; left: 0; right: 0; bottom: 0; padding: 26px 10px 10px; text-align: center;
+    font-family: 'Cinzel', serif; color: #fff; font-size: 0.95rem;
+    background: linear-gradient(0deg, rgba(0, 0, 0, 0.85), transparent);
+  }
+  .dest-pronto { display: flex; align-items: center; justify-content: center; cursor: default; color: var(--texto-suave); font-family: 'Cinzel', serif; font-style: italic; text-align: center; padding: 12px; }
+  .dest-pronto:hover { transform: none; box-shadow: none; }
+  @media (max-width: 900px) { .dos-col { grid-template-columns: 1fr; } }
+
+  /* ---------- Tarjetas y autor ---------- */
+  .tarjeta { background: var(--panel); border: 1px solid var(--borde); border-left: 3px solid var(--dorado); padding: 24px; margin-bottom: 20px; border-radius: 4px; }
   .tarjeta h3 { font-family: 'Cinzel', serif; color: var(--dorado-claro); margin-bottom: 6px; }
-  .fecha { color: var(--texto-suave); font-size: 0.85rem; margin-bottom: 8px; }
-  .rejilla {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-    gap: 20px;
-  }
-  .portada {
-    aspect-ratio: 2 / 3;
-    background: linear-gradient(160deg, #22222f, #0e0e14);
-    border: 1px solid #2a2a36;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    text-align: center;
-    padding: 12px;
-    color: var(--texto-suave);
-    font-family: 'Cinzel', serif;
-    transition: transform 0.25s, box-shadow 0.25s;
-    cursor: pointer;
-  }
-  .portada:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,162,75,0.25); border-color: var(--dorado); }
-
-  /* Foto del autor */
+  #sobre-autor { scroll-margin-top: calc(var(--nav-h) + 16px); }
   .autor { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-  .foto-autor {
-    width: 180px;
-    height: 180px;
-    object-fit: cover;
-    border-radius: 50%;
-    border: 3px solid var(--dorado);
-    box-shadow: 0 0 20px rgba(201,162,75,0.35);
-  }
+  .foto-autor { width: 180px; height: 180px; object-fit: cover; border-radius: 50%; border: 3px solid var(--dorado); box-shadow: 0 0 20px rgba(201, 162, 75, 0.35); }
   .autor p { flex: 1; min-width: 220px; }
+  .aviso-voz { color: var(--texto-suave); font-size: 0.85rem; font-style: italic; }
 
-  /* Libros */
-  .libro { text-align: center; }
-  .libro img {
-    width: 100%;
-    aspect-ratio: 2 / 3;
-    object-fit: cover;
-    border: 1px solid #2a2a36;
-    border-radius: 4px;
-    transition: transform 0.25s, box-shadow 0.25s;
+  /* ---------- Galería y libros ---------- */
+  .rejilla { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+  .portada {
+    aspect-ratio: 2 / 3; background: linear-gradient(160deg, #22222f, #0e0e14); border: 1px solid var(--borde);
+    display: flex; align-items: center; justify-content: center; text-align: center; padding: 12px;
+    color: var(--texto-suave); font-family: 'Cinzel', serif; transition: transform 0.25s, box-shadow 0.25s; cursor: pointer;
   }
-  .libro img:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201,162,75,0.25); border-color: var(--dorado); }
+  .portada:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201, 162, 75, 0.25); border-color: var(--dorado); }
+  .libro { text-align: center; cursor: pointer; }
+  .libro img { width: 100%; aspect-ratio: 2 / 3; object-fit: cover; border: 1px solid var(--borde); border-radius: 4px; transition: transform 0.25s, box-shadow 0.25s; }
+  .libro img:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(201, 162, 75, 0.25); border-color: var(--dorado); }
   .libro-titulo { font-family: 'Cinzel', serif; color: var(--dorado-claro); margin-top: 10px; }
   .sin-clic { cursor: default; font-style: italic; }
-  .sin-clic:hover { transform: none; box-shadow: none; border-color: #2a2a36; }
+  .sin-clic:hover { transform: none; box-shadow: none; border-color: var(--borde); }
 
-  /* Detalle de libro */
-  .libro { cursor: pointer; }
-  .volver {
-    background: none; border: none; color: var(--dorado-claro);
-    font-family: 'Cinzel', serif; font-size: 0.95rem; cursor: pointer;
-    padding: 6px 0; margin-bottom: 16px;
-  }
+  /* ---------- Detalle de libro ---------- */
+  .volver { background: none; border: none; color: var(--dorado-claro); font-family: 'Cinzel', serif; font-size: 0.95rem; cursor: pointer; padding: 6px 0; margin-bottom: 16px; }
   .volver:hover { text-decoration: underline; }
   .detalle { display: flex; gap: 28px; flex-wrap: wrap; margin-bottom: 28px; }
-  .detalle img {
-    width: 220px; aspect-ratio: 2 / 3; object-fit: cover;
-    border: 1px solid #2a2a36; border-radius: 4px;
-    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-  }
+  .detalle img { width: 220px; aspect-ratio: 2 / 3; object-fit: cover; border: 1px solid var(--borde); border-radius: 4px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); }
   .detalle-info { flex: 1; min-width: 240px; }
   .detalle-info h3 { font-family: 'Cinzel', serif; color: var(--dorado-claro); font-size: 1.6rem; margin-bottom: 10px; }
   .subtitulo { font-family: 'Cinzel', serif; color: var(--dorado); margin-bottom: 12px; }
   .estrellas { margin-top: 16px; }
-  .estrella {
-    background: none; border: none; cursor: pointer;
-    font-size: 2rem; color: #3a3a48; transition: color 0.15s, transform 0.15s;
-  }
+  .estrella { background: none; border: none; cursor: pointer; font-size: 2rem; color: #3a3a48; transition: color 0.15s, transform 0.15s; }
   .estrella.on { color: var(--dorado-claro); }
   .estrella:hover { transform: scale(1.2); color: var(--dorado); }
   .estrellas-nota { color: var(--texto-suave); font-size: 0.85rem; }
   .lista-partes { display: grid; gap: 10px; }
   .parte {
     display: flex; justify-content: space-between; align-items: center;
-    background: var(--panel); border: 1px solid #2a2a36; border-left: 3px solid var(--dorado);
-    color: var(--texto); font-family: 'Lora', serif; font-size: 1.05rem;
-    padding: 14px 18px; cursor: pointer; border-radius: 4px; transition: all 0.2s;
+    background: var(--panel); border: 1px solid var(--borde); border-left: 3px solid var(--dorado);
+    font-family: 'Lora', serif; font-size: 1.05rem; padding: 14px 18px; cursor: pointer; border-radius: 4px; transition: all 0.2s;
   }
-  .parte:hover { border-color: var(--dorado); box-shadow: 0 0 14px rgba(201,162,75,0.25); }
+  .parte:hover { border-color: var(--dorado); box-shadow: 0 0 14px rgba(201, 162, 75, 0.25); }
   .leida { color: var(--dorado); font-size: 0.85rem; }
 
-  /* Lector */
+  /* ---------- Lector ---------- */
   .barra-lector { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 10px; }
-  .btn {
-    background: var(--panel); border: 1px solid #2a2a36; color: var(--texto);
-    font-family: 'Cinzel', serif; padding: 8px 16px; cursor: pointer; border-radius: 4px; transition: all 0.2s;
-  }
+  .btn { background: var(--panel); border: 1px solid var(--borde); font-family: 'Cinzel', serif; padding: 8px 16px; cursor: pointer; border-radius: 4px; transition: all 0.2s; }
   .btn:hover:not(:disabled) { border-color: var(--dorado); color: var(--dorado-claro); }
   .btn:disabled { opacity: 0.35; cursor: default; }
-  .tamano { display: flex; gap: 8px; }
-  .caratula-parte {
-    display: block; width: min(320px, 80%); margin: 10px auto 24px;
-    border: 1px solid #2a2a36; border-radius: 4px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);
-  }
-  .titulo-parte { font-family: 'Cinzel', serif; color: var(--dorado-claro); text-align: center; font-size: 1.8rem; margin-bottom: 24px; }
+  .caratula-parte { display: block; width: min(320px, 80%); margin: 10px auto 24px; border: 1px solid var(--borde); border-radius: 4px; box-shadow: 0 8px 30px rgba(0, 0, 0, 0.5); }
+  .titulo-parte { font-family: 'Cinzel', serif; color: var(--dorado-claro); text-align: center; font-size: 1.8rem; margin-bottom: 20px; }
   .texto-lector { max-width: 680px; margin: 0 auto; line-height: 1.9; }
   .texto-lector p { margin-bottom: 1.2em; }
+  .texto-lector p.leyendo { background: rgba(201, 162, 75, 0.14); border-left: 3px solid var(--dorado); padding-left: 12px; margin-left: -15px; border-radius: 2px; }
   .nav-partes { display: flex; justify-content: space-between; gap: 10px; flex-wrap: wrap; max-width: 680px; margin: 40px auto 0; }
 
-  footer { text-align: center; padding: 30px; color: var(--texto-suave); font-size: 0.85rem; border-top: 1px solid #2a2a36; }
+  /* Reproductor (voz, música, seguir lectura, ajustes) */
+  .reproductor {
+    position: sticky; top: calc(var(--nav-h) + 8px); z-index: 20;
+    max-width: 680px; margin: 0 auto 26px; padding: 8px 10px;
+    background: rgba(16, 16, 24, 0.94); backdrop-filter: blur(8px);
+    border: 1px solid rgba(201, 162, 75, 0.45); border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+  .rep-fila { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+  .rep-musica { display: contents; }
+  .rep-sep { width: 1px; height: 26px; background: var(--borde); margin: 0 2px; }
+  .rb {
+    display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+    min-height: 40px; padding: 0 14px; background: var(--panel-2); color: var(--texto);
+    border: 1px solid #343446; border-radius: 999px; cursor: pointer; font-size: 0.88rem;
+    transition: background 0.2s, border-color 0.2s, color 0.2s, box-shadow 0.2s;
+  }
+  .rb:hover { border-color: var(--dorado); color: var(--dorado-claro); }
+  .rb .ic { width: 1.25em; height: 1.25em; }
+  .rb-toggle.on { background: rgba(201, 162, 75, 0.18); border-color: var(--dorado); color: var(--dorado-claro); }
+  .rb-play {
+    width: 52px; height: 52px; padding: 0; border: none; color: #17120a;
+    background: linear-gradient(180deg, #f0d98c, #c9a24b);
+    box-shadow: 0 4px 16px rgba(201, 162, 75, 0.35);
+  }
+  .rb-play:hover { color: #17120a; box-shadow: 0 4px 22px rgba(201, 162, 75, 0.6); }
+  .rb-play .ic { width: 26px; height: 26px; }
+  .rb-play.sonando { animation: latido 1.8s ease-in-out infinite; }
+  @keyframes latido { 50% { box-shadow: 0 0 0 7px rgba(201, 162, 75, 0.16), 0 4px 22px rgba(201, 162, 75, 0.5); } }
+  .rb-ajustes { margin-left: auto; }
+  .rb-ajustes.on { border-color: var(--dorado); color: var(--dorado-claro); }
+  .rep-ajustes { display: grid; gap: 12px; padding: 14px 6px 8px; margin-top: 8px; border-top: 1px solid var(--borde); }
+  .grupo { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; }
+  .lbl { color: var(--texto-suave); font-size: 0.85rem; }
+  .chips { display: flex; gap: 6px; }
+  .chip {
+    min-width: 44px; padding: 7px 14px; background: var(--panel-2); border: 1px solid #343446;
+    border-radius: 999px; cursor: pointer; font-size: 0.85rem; transition: all 0.2s;
+  }
+  .chip:hover { border-color: var(--dorado); }
+  .chip.on { background: var(--dorado); border-color: var(--dorado); color: #17120a; font-weight: 600; }
+  .rep-ajustes input[type=range], .controles input[type=range] { accent-color: var(--dorado); width: 150px; }
+  .controles { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  @media (max-width: 600px) {
+    .rb .t { display: none; }
+    .rb:not(.rb-play) { padding: 0; width: 42px; }
+    .rep-ajustes input[type=range] { width: 130px; }
+  }
+
+  footer { text-align: center; padding: 30px; color: var(--texto-suave); font-size: 0.85rem; border-top: 1px solid var(--borde); }
 </style>
 </head>
 <body>
 
-<header>
-  <h1>ONYX STUDIO</h1>
-  <p>Bienvenid@</p>
-</header>
+<!-- Íconos (se reutilizan en toda la página) -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8"/><path d="M5 10v10h5v-6h4v6h5V10"/></symbol>
+    <symbol id="i-news" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="2"/><path d="M8 8h8M8 12h8M8 16h5"/></symbol>
+    <symbol id="i-gallery" viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="1.6"/><path d="M4 18l5-5 4 4 3-3 4 4"/></symbol>
+    <symbol id="i-books" viewBox="0 0 24 24"><path d="M12 6c-2-1.5-5-2-9-2v14c4 0 7 .5 9 2 2-1.5 5-2 9-2V4c-4 0-7 .5-9 2z"/><path d="M12 6v14"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><circle cx="11" cy="11" r="6.5"/><path d="M16 16l4.5 4.5"/></symbol>
+    <symbol id="i-globe" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18"/></symbol>
+    <symbol id="i-caret" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></symbol>
+    <symbol id="i-arrow" viewBox="0 0 24 24"><path d="M5 12h14M13 6l6 6-6 6"/></symbol>
+    <symbol id="i-person" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.6"/><path d="M5 20c0-4 3-6.2 7-6.2s7 2.2 7 6.2"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z"/></symbol>
+    <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5v14l11-7z" style="fill:currentColor;stroke:none"/></symbol>
+    <symbol id="i-pause" viewBox="0 0 24 24"><path d="M7 5h4v14H7zM13 5h4v14h-4z" style="fill:currentColor;stroke:none"/></symbol>
+    <symbol id="i-stop" viewBox="0 0 24 24"><rect x="6" y="6" width="12" height="12" rx="1.5" style="fill:currentColor;stroke:none"/></symbol>
+    <symbol id="i-restart" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 3-6.2"/><path d="M4 4v5h5"/></symbol>
+    <symbol id="i-music" viewBox="0 0 24 24"><path d="M9 18V6l10-2v12"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></symbol>
+    <symbol id="i-down" viewBox="0 0 24 24"><path d="M12 4v14M6 13l6 6 6-6"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><path d="M4 7h10M18 7h2M4 17h2M10 17h10"/><circle cx="16" cy="7" r="2"/><circle cx="8" cy="17" r="2"/></symbol>
+  </defs>
+</svg>
 
-<nav>
-  <button class="activo" data-seccion="inicio">Inicio</button>
-  <button data-seccion="noticias">Noticias</button>
-  <button data-seccion="galeria">Galería</button>
-  <button data-seccion="libros">Libros</button>
-</nav>
+<header class="topbar" id="topbar">
+  <button class="logo" data-ir="inicio" aria-label="Onyx Studio">
+    <svg class="ic"><use href="#i-books"/></svg>
+    <span class="logo-t"><b>ONYX</b><small>STUDIO</small></span>
+  </button>
+
+  <nav>
+    <button class="activo" data-seccion="inicio"><svg class="ic"><use href="#i-home"/></svg><span data-i18n="nav_inicio">Inicio</span></button>
+    <button data-seccion="noticias"><svg class="ic"><use href="#i-news"/></svg><span data-i18n="nav_noticias">Noticias</span></button>
+    <button data-seccion="galeria"><svg class="ic"><use href="#i-gallery"/></svg><span data-i18n="nav_galeria">Galería</span></button>
+    <button data-seccion="libros"><svg class="ic"><use href="#i-books"/></svg><span data-i18n="nav_libros">Libros</span></button>
+  </nav>
+
+  <div class="buscar">
+    <svg class="ic"><use href="#i-search"/></svg>
+    <input id="buscador" type="search" autocomplete="off" data-i18n-ph="search_ph" placeholder="Busca tu libro...">
+    <div id="resultados-busqueda" class="resultados"></div>
+  </div>
+
+  <div class="selidioma">
+    <button id="btn-idioma" aria-haspopup="true" aria-expanded="false" data-i18n-aria="lang_aria">
+      <svg class="ic"><use href="#i-globe"/></svg><span data-idioma-actual>ES</span><svg class="ic"><use href="#i-caret"/></svg>
+    </button>
+    <div class="menu-idioma" id="menu-idioma" hidden>
+      <button data-idioma="es">Español</button>
+      <button data-idioma="en">English</button>
+    </div>
+  </div>
+</header>
 
 <main>
 
   <section id="inicio" class="activa">
-    <h2>Sobre el autor</h2>
-    <div class="tarjeta autor">
-      <img src="imagenes/foto.jpg" alt="Juan David Rokrack" class="foto-autor">
-      <p>Juan David Rokrack, un joven colombiano de 18 años, en busca de crecer, escribir y crear más cada día, espera el momento perfecto para hacer de este sueño una realidad.</p>
+    <div class="hero">
+      <!-- La imagen se cambia subiendo imagenes/visualizador-pagina-intercambiable.jpg (o .png / .webp) -->
+      <div class="hero-img" id="hero-img"></div>
+      <div class="hero-sombra"></div>
+      <div class="hero-contenido">
+        <h1 class="hero-titulo"><span class="h-onyx">ONYX</span><span class="h-studio">STUDIO</span></h1>
+        <div class="hero-sep"><svg class="ic"><use href="#i-spark"/></svg></div>
+        <p class="hero-lema" data-i18n="hero_lema">Lee. Descubre. Comparte.</p>
+        <p class="hero-texto" data-i18n="hero_text"></p>
+        <button class="btn-ir" data-ir="libros"><svg class="ic"><use href="#i-books"/></svg><span data-i18n="see_all">Ver todos los libros</span><svg class="ic"><use href="#i-arrow"/></svg></button>
+      </div>
     </div>
-    <div class="tarjeta">
-      <h3>Lo que he escrito</h3>
-      <p>Desde el año 2017 empezó con historias simples, que ahora ha transformado, siendo la primera de ellas "Linterna Roja".</p>
+
+    <div class="contenedor">
+      <div class="acciones">
+        <button class="accion" data-ir="libros">
+          <svg class="ic"><use href="#i-books"/></svg>
+          <span><b data-i18n="act1_t"></b><small data-i18n="act1_d"></small></span>
+          <svg class="ic"><use href="#i-arrow"/></svg>
+        </button>
+        <button class="accion" data-ir="libros">
+          <svg class="ic"><use href="#i-news"/></svg>
+          <span><b data-i18n="act2_t"></b><small data-i18n="act2_d"></small></span>
+          <svg class="ic"><use href="#i-arrow"/></svg>
+        </button>
+        <button class="accion" data-bajar="sobre-autor">
+          <svg class="ic"><use href="#i-person"/></svg>
+          <span><b data-i18n="act3_t"></b><small data-i18n="act3_d"></small></span>
+          <svg class="ic"><use href="#i-arrow"/></svg>
+        </button>
+      </div>
+
+      <div class="dos-col">
+        <div>
+          <div class="sec-titulo">
+            <svg class="ic"><use href="#i-spark"/></svg><h3 data-i18n="featured">Historias destacadas</h3>
+            <button class="mas" data-ir="libros"><span data-i18n="more">Ver más</span> →</button>
+          </div>
+          <div class="destacados" id="destacados"></div>
+        </div>
+        <div>
+          <div class="sec-titulo">
+            <svg class="ic"><use href="#i-spark"/></svg><h3 data-i18n="latest">Últimas noticias</h3>
+            <button class="mas" data-ir="noticias"><span data-i18n="more">Ver más</span> →</button>
+          </div>
+          <div class="tarjeta"><p class="aviso-voz" data-i18n="news_empty"></p></div>
+        </div>
+      </div>
+
+      <div id="sobre-autor">
+        <h2 data-i18n="about_title">Sobre el autor</h2>
+        <div class="tarjeta autor">
+          <img src="imagenes/foto.jpg" alt="Juan David Rokrack" class="foto-autor">
+          <p data-i18n="about_bio"></p>
+        </div>
+        <div class="tarjeta">
+          <h3 data-i18n="written_title">Lo que he escrito</h3>
+          <p data-i18n="written_text"></p>
+        </div>
+      </div>
     </div>
   </section>
 
   <section id="noticias">
-    <h2>Noticias</h2>
-    <div class="tarjeta">
-      <p style="color:var(--texto-suave); font-style:italic;">Aún no hay noticias. Pronto habrá novedades.</p>
+    <div class="contenedor">
+      <h2 data-i18n="news_title">Noticias</h2>
+      <div class="tarjeta">
+        <p class="aviso-voz" data-i18n="news_empty"></p>
+      </div>
     </div>
   </section>
 
   <section id="galeria">
-    <h2>Galería</h2>
-    <div class="rejilla">
-      <div class="portada">Portada 1</div>
-      <div class="portada">Portada 2</div>
-      <div class="portada">Portada 3</div>
-      <div class="portada">Portada 4</div>
-      <div class="portada">Portada 5</div>
-      <div class="portada">Portada 6</div>
+    <div class="contenedor">
+      <h2 data-i18n="gallery_title">Galería</h2>
+      <div class="rejilla">
+        <div class="portada" data-i18n="cover_n" data-n="1"></div>
+        <div class="portada" data-i18n="cover_n" data-n="2"></div>
+        <div class="portada" data-i18n="cover_n" data-n="3"></div>
+        <div class="portada" data-i18n="cover_n" data-n="4"></div>
+        <div class="portada" data-i18n="cover_n" data-n="5"></div>
+        <div class="portada" data-i18n="cover_n" data-n="6"></div>
+      </div>
     </div>
   </section>
 
   <section id="libros">
-    <h2>Libros</h2>
-    <div id="vista-libros"></div>
+    <div class="contenedor">
+      <h2 data-i18n="books_title">Libros</h2>
+      <div id="vista-libros"></div>
+    </div>
   </section>
 
 </main>
 
-<footer>© 2026 Onyx Studio · Todos los derechos reservados</footer>
+<footer data-i18n="footer">© 2026 Onyx Studio · Todos los derechos reservados</footer>
 
+<script src="idioma.js"></script>
 <script src="lector.js"></script>
 <script>
-  const botones = document.querySelectorAll('nav button');
+  // Menú de secciones
+  const botones = document.querySelectorAll('.topbar nav button');
   const secciones = document.querySelectorAll('section');
   botones.forEach(boton => {
     boton.addEventListener('click', () => {
@@ -258,6 +491,45 @@
       window.scrollTo({ top: 0, behavior: 'smooth' });
     });
   });
+
+  // Alto de la barra superior (el reproductor del lector se pega justo debajo)
+  const topbar = document.getElementById('topbar');
+  const medir = () => document.documentElement.style.setProperty('--nav-h', topbar.offsetHeight + 'px');
+  medir();
+  window.addEventListener('resize', medir);
+  if ('ResizeObserver' in window) new ResizeObserver(medir).observe(topbar);
+
+  // Menú de idioma
+  const btnIdioma = document.getElementById('btn-idioma');
+  const menuIdioma = document.getElementById('menu-idioma');
+  btnIdioma.addEventListener('click', e => {
+    e.stopPropagation();
+    menuIdioma.hidden = !menuIdioma.hidden;
+    btnIdioma.setAttribute('aria-expanded', String(!menuIdioma.hidden));
+  });
+  document.addEventListener('click', () => { menuIdioma.hidden = true; btnIdioma.setAttribute('aria-expanded', 'false'); });
+
+  // Bajar a una parte de la página (ej.: "Conoce al autor")
+  document.addEventListener('click', e => {
+    const b = e.target.closest('[data-bajar]');
+    if (!b) return;
+    const el = document.getElementById(b.dataset.bajar);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+
+  // Imagen principal intercambiable: sube imagenes/visualizador-pagina-intercambiable.(jpg|jpeg|png|webp)
+  (function () {
+    const el = document.getElementById('hero-img');
+    const base = 'imagenes/visualizador-pagina-intercambiable';
+    const exts = ['jpg', 'jpeg', 'png', 'webp'];
+    (function probar(i) {
+      if (i >= exts.length) return;
+      const im = new Image();
+      im.onload = () => { el.style.backgroundImage = 'url("' + base + '.' + exts[i] + '")'; };
+      im.onerror = () => probar(i + 1);
+      im.src = base + '.' + exts[i];
+    })(0);
+  })();
 </script>
 
 </body>
